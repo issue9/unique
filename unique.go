@@ -48,8 +48,14 @@ func (u *Unique) reset() {
 	u.prefix = strconv.FormatInt(time.Now().Unix(), 10)
 	u.ai.Reset(1, u.random.Int63n(u.step))
 
-	restTime := time.Duration(u.random.Int63n(u.timer)) * time.Minute
-	time.AfterFunc(restTime, u.reset)
+	// u.random.Int63n 有可能返回 0，所以给其值加上 1
+	dur := u.random.Int63n(u.timer)
+	if dur == 0 {
+		dur++
+	}
+
+	resetTime := time.Duration(dur) * time.Minute // NOTE: resetTime 最起码要大于 1 秒
+	time.AfterFunc(resetTime, u.reset)
 }
 
 // String 返回一个唯一的 ID
