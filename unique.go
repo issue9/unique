@@ -13,9 +13,9 @@ import (
 	"github.com/issue9/autoinc"
 )
 
-const (
-	formatBase = 10
-)
+const formatBase = 10
+
+var defaultUnique = New(time.Now().Unix(), 2, 60)
 
 // Unique 基于时间戳的唯一字符串。
 //
@@ -57,14 +57,12 @@ func (u *Unique) reset() {
 	if u.ai != nil {
 		u.ai.Stop()
 	}
-	u.ai = autoinc.New(1, u.random.Int63n(u.step), 1000)
+	u.ai = autoinc.New(1, u.getRandomNumber(u.step), 1000)
 
-	dur := u.random.Int63n(u.duration)
-	if dur == 0 {
-		dur++
+	resetTime := time.Duration(u.getRandomNumber(u.duration)) * time.Minute
+	if u.timer != nil {
+		u.timer.Stop()
 	}
-
-	resetTime := time.Duration(dur) * time.Minute // NOTE: resetTime 最起码要大于 1 秒
 	u.timer = time.AfterFunc(resetTime, u.reset)
 }
 
@@ -75,7 +73,6 @@ func (u *Unique) String() string {
 		return u.prefix + strconv.FormatInt(id, formatBase)
 	}
 
-	u.timer.Stop()
 	u.reset()
 
 	return u.prefix + strconv.FormatInt(u.ai.MustID(), formatBase)
@@ -86,7 +83,15 @@ func (u *Unique) Bytes() []byte {
 	return []byte(u.String())
 }
 
-var defaultUnique = New(time.Now().Unix(), 10, 60)
+// 获取一个位于 [1,max) 区间的值
+func (u *Unique) getRandomNumber(max int64) int64 {
+	n := u.random.Int63n(max)
+	if n <= 0 {
+		n++
+	}
+
+	return n
+}
 
 // String 返回一个唯一的字符串
 func String() string {
