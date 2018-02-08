@@ -14,28 +14,32 @@ import (
 )
 
 // Unique 基于时间戳的唯一字符串。
-// 不能在一秒之内重置计数器。
+//
+// NOTE: 不能在一秒之内重置计数器。
 type Unique struct {
 	step   int64 // 计数器的最大步长
-	timer  int64 // 计数器的最大重置时间
 	random *rand.Rand
+
+	timer    *time.Timer
+	duration int64
 
 	prefix string           // 时间戳字符串
 	ai     *autoinc.AutoInc // 自增值
 }
 
 // New 声明一个新的 Unique。
+//
 // seed 随机种子；
-// step 计数器的最大步长；
-// timer 计数器的最长重置时间，单位秒
-func New(seed, step, timer int64) *Unique {
+// step 计数器的最大步长，可以负数，为 0 会 panic；
+// duration 计数器的最长重置时间，单位秒。系统会在 [1,timer] 范围内重置计数器。
+func New(seed, step, duration int64) *Unique {
 	random := rand.New(rand.NewSource(seed))
 
 	u := &Unique{
-		step:   step,
-		timer:  timer,
-		random: random,
-		ai:     autoinc.New(1, random.Int63n(step), 1000),
+		step:     step,
+		duration: duration,
+		random:   random,
+		ai:       autoinc.New(1, random.Int63n(step), 1000),
 	}
 
 	u.reset()
@@ -48,18 +52,25 @@ func (u *Unique) reset() {
 	u.prefix = strconv.FormatInt(time.Now().Unix(), 10)
 	u.ai.Reset(1, u.random.Int63n(u.step))
 
-	// u.random.Int63n 有可能返回 0，所以给其值加上 1
-	dur := u.random.Int63n(u.timer)
+	dur := u.random.Int63n(u.duration)
 	if dur == 0 {
 		dur++
 	}
 
 	resetTime := time.Duration(dur) * time.Minute // NOTE: resetTime 最起码要大于 1 秒
-	time.AfterFunc(resetTime, u.reset)
+	u.timer = time.AfterFunc(resetTime, u.reset)
 }
 
-// String 返回一个唯一的 ID
+// String 返回一个唯一的字符串
 func (u *Unique) String() string {
+	id, err := u.ai.ID()
+	if err == nil {
+		return u.prefix + strconv.FormatInt(id, 10)
+	}
+
+	u.timer.Stop()
+	u.reset()
+
 	return u.prefix + strconv.FormatInt(u.ai.MustID(), 10)
 }
 
@@ -70,7 +81,7 @@ func (u *Unique) Bytes() []byte {
 
 var defaultUnique = New(time.Now().Unix(), 10, 60)
 
-// String 返回一个唯一的 ID
+// String 返回一个唯一的字符串
 func String() string {
 	return defaultUnique.String()
 }
