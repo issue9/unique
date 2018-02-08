@@ -14,7 +14,7 @@ import (
 func TestUnique_getRandomNumber(t *testing.T) {
 	a := assert.New(t)
 
-	u := New(time.Now().Unix(), 2, 5)
+	u := New(time.Now().Unix(), 2, 5, true)
 	a.NotNil(u)
 
 	// 保证 getRandomNumber 不会返回 0
