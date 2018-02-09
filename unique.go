@@ -17,6 +17,12 @@ var defaultUnique = New(time.Now().Unix(), 2, 60, false)
 
 // Unique 基于时间戳的唯一字符串。
 //
+// Unique 由两部分组成：
+// 前缀是由一个相对稳定的字符串，与时间相关联；
+// 后缀是一个自增的数值。
+// 每次刷新前缀之后，都会重置后缀的计数器，从头开始。
+// 刷新时间和计数器的步长都是一个随机数。
+//
 // NOTE: 不能在一秒之内重置计数器。
 type Unique struct {
 	random     *rand.Rand
