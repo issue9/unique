@@ -2,7 +2,9 @@ unique [![Build Status](https://travis-ci.org/issue9/unique.svg?branch=master)](
 ======
 
 
-用于生成一个全唯一字符串
+用于生成一个唯一字符串
+
+
 
 ### 安装
 

@@ -8,6 +8,7 @@ package unique
 import (
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/issue9/autoinc"
@@ -45,8 +46,6 @@ type Unique struct {
 // prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值。
 // alpha 是否包含字母
 func New(seed, step, duration int64, prefixFormat string, alpha bool) *Unique {
-	random := rand.New(rand.NewSource(seed))
-
 	if step <= 0 {
 		panic("无效的参数 step")
 	}
@@ -55,8 +54,12 @@ func New(seed, step, duration int64, prefixFormat string, alpha bool) *Unique {
 		panic("无效的参数 duration")
 	}
 
+	if prefixFormat != "" && !isValidDateFormat(prefixFormat) {
+		panic("无效的 prefixFormat 参数")
+	}
+
 	u := &Unique{
-		random:       random,
+		random:       rand.New(rand.NewSource(seed)),
 		formatBase:   10,
 		duration:     duration,
 		prefixFormat: prefixFormat,
@@ -70,6 +73,15 @@ func New(seed, step, duration int64, prefixFormat string, alpha bool) *Unique {
 	u.reset()
 
 	return u
+}
+
+func isValidDateFormat(format string) bool {
+	return strings.Contains(format, "2006") &&
+		strings.Contains(format, "01") &&
+		strings.Contains(format, "02") &&
+		strings.Contains(format, "15") &&
+		strings.Contains(format, "04") &&
+		strings.Contains(format, "05")
 }
 
 // 重置时间戳和计数器
