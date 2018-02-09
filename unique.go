@@ -13,7 +13,7 @@ import (
 	"github.com/issue9/autoinc"
 )
 
-var defaultUnique = New(time.Now().Unix(), 2, 60, false)
+var defaultUnique = New(time.Now().Unix(), 2, 60, "20060102150405-", false)
 
 // Unique 基于时间戳的唯一字符串。
 //
@@ -28,12 +28,13 @@ type Unique struct {
 	random     *rand.Rand
 	formatBase int
 
-	prefix   string
-	timer    *time.Timer
-	duration int64
+	prefix       string
+	prefixFormat string
+	timer        *time.Timer
+	duration     int64
 
-	ai   *autoinc.AutoInc
 	step int64
+	ai   *autoinc.AutoInc
 }
 
 // New 声明一个新的 Unique。
@@ -41,8 +42,9 @@ type Unique struct {
 // seed 随机种子；
 // step 计数器的最大步长，只能大于 0；
 // duration 计数器的最长重置时间，单位秒。系统会在 [1,duration] 范围内重置计数器；
+// prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值。
 // alpha 是否包含字母
-func New(seed, step, duration int64, alpha bool) *Unique {
+func New(seed, step, duration int64, prefixFormat string, alpha bool) *Unique {
 	random := rand.New(rand.NewSource(seed))
 
 	if step <= 0 {
@@ -54,10 +56,11 @@ func New(seed, step, duration int64, alpha bool) *Unique {
 	}
 
 	u := &Unique{
-		random:     random,
-		formatBase: 10,
-		duration:   duration,
-		step:       step,
+		random:       random,
+		formatBase:   10,
+		duration:     duration,
+		prefixFormat: prefixFormat,
+		step:         step,
 	}
 
 	if alpha {
@@ -71,7 +74,11 @@ func New(seed, step, duration int64, alpha bool) *Unique {
 
 // 重置时间戳和计数器
 func (u *Unique) reset() {
-	u.prefix = strconv.FormatInt(time.Now().Unix(), u.formatBase)
+	if u.prefixFormat != "" {
+		u.prefix = time.Now().Format(u.prefixFormat)
+	} else {
+		u.prefix = strconv.FormatInt(time.Now().Unix(), u.formatBase)
+	}
 
 	if u.ai != nil {
 		u.ai.Stop()
