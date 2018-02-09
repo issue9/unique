@@ -39,11 +39,19 @@ type Unique struct {
 // New 声明一个新的 Unique。
 //
 // seed 随机种子；
-// step 计数器的最大步长，可以负数，为 0 会 panic；
+// step 计数器的最大步长，只能大于 0；
 // duration 计数器的最长重置时间，单位秒。系统会在 [1,duration] 范围内重置计数器；
 // alpha 是否包含字母
 func New(seed, step, duration int64, alpha bool) *Unique {
 	random := rand.New(rand.NewSource(seed))
+
+	if step <= 0 {
+		panic("无效的参数 step")
+	}
+
+	if duration <= 0 {
+		panic("无效的参数 duration")
+	}
 
 	u := &Unique{
 		random:     random,
