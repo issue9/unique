@@ -15,15 +15,27 @@ func TestNew(t *testing.T) {
 	a := assert.New(t)
 
 	a.Panic(func() {
-		New(20, 0, 100, "", false)
+		New(20, 0, 100, "", 10)
 	})
 
 	a.Panic(func() {
-		New(20, 1, 0, "", false)
+		New(20, 1, 0, "", 10)
 	})
 
 	a.Panic(func() {
-		New(20, 1, 1, "2006", false)
+		New(20, 1, 1, "2006", 10)
+	})
+
+	a.Panic(func() {
+		New(20, 1, 1, "20060102150405", 1)
+	})
+
+	a.Panic(func() {
+		New(20, 1, 1, "20060102150405", 37)
+	})
+
+	a.NotPanic(func() {
+		New(20, 1, 1, "20060102150405", 2)
 	})
 }
 
@@ -42,7 +54,7 @@ func TestIsValidDateFormat(t *testing.T) {
 func TestUnique_getRandomNumber(t *testing.T) {
 	a := assert.New(t)
 
-	u := New(time.Now().Unix(), 2, 5, "", true)
+	u := New(time.Now().Unix(), 2, 5, "", 36)
 	a.NotNil(u)
 
 	// 保证 getRandomNumber 不会返回 0

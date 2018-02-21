@@ -9,33 +9,47 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/issue9/autoinc"
 )
 
-var defaultUnique = New(time.Now().Unix(), 2, 60, "20060102150405-", false)
+var defaultUnique = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
 
 // Unique 基于时间戳的唯一字符串。
 //
 // Unique 由两部分组成：
 // 前缀是由一个相对稳定的字符串，与时间相关联；
 // 后缀是一个自增的数值。
+//
 // 每次刷新前缀之后，都会重置后缀的计数器，从头开始。
 // 刷新时间和计数器的步长都是一个随机数。
 //
 // NOTE: 不能在一秒之内重置计数器。
 type Unique struct {
-	random     *rand.Rand
+	random *rand.Rand
+
+	// 数据转换成字符串所采用的进制。
 	formatBase int
 
+	// 前缀部分的内容。
+	//
+	// 根据 prefixFormat 是否存在，会呈现不同的内容：
+	// 如果 prefixFormat 为空，prefix 为一个时间戳的整数值，
+	// 按一定的进制进行转换之后的值；否则是按 prefixFormat
+	// 进行格式化的时间数据。
 	prefix       string
 	prefixFormat string
-	timer        *time.Timer
-	duration     int64
+
+	timer    *time.Timer
+	duration int64
 
 	step int64
 	ai   *autoinc.AutoInc
+
+	// 用保证 prefix 和 ai 的一致性。
+	resetLocker sync.RWMutex
 }
 
 // New 声明一个新的 Unique。
@@ -44,8 +58,8 @@ type Unique struct {
 // step 计数器的最大步长，只能大于 0；
 // duration 计数器的最长重置时间，单位秒。系统会在 [1,duration] 范围内重置计数器；
 // prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值。
-// alpha 是否包含字母
-func New(seed, step, duration int64, prefixFormat string, alpha bool) *Unique {
+// base 数值转换成字符串时，所采用的进制，可以是 [2,36] 之间的值。
+func New(seed, step, duration int64, prefixFormat string, base int) *Unique {
 	if step <= 0 {
 		panic("无效的参数 step")
 	}
@@ -58,16 +72,16 @@ func New(seed, step, duration int64, prefixFormat string, alpha bool) *Unique {
 		panic("无效的 prefixFormat 参数")
 	}
 
+	if base < 2 || base > 36 {
+		panic("无效的 base 值，只能介于 [2,36] 之间")
+	}
+
 	u := &Unique{
 		random:       rand.New(rand.NewSource(seed)),
-		formatBase:   10,
+		formatBase:   base,
 		duration:     duration,
 		prefixFormat: prefixFormat,
 		step:         step,
-	}
-
-	if alpha {
-		u.formatBase = 36
 	}
 
 	u.reset()
@@ -86,6 +100,9 @@ func isValidDateFormat(format string) bool {
 
 // 重置时间戳和计数器
 func (u *Unique) reset() {
+	u.resetLocker.Lock()
+	defer u.resetLocker.Unlock()
+
 	if u.prefixFormat != "" {
 		u.prefix = time.Now().Format(u.prefixFormat)
 	} else {
@@ -97,26 +114,35 @@ func (u *Unique) reset() {
 	}
 	u.ai = autoinc.New(1, u.getRandomNumber(u.step), 1000)
 
-	resetTime := time.Duration(u.getRandomNumber(u.duration)) * time.Minute
 	if u.timer != nil {
 		u.timer.Stop()
 	}
+	resetTime := time.Duration(u.getRandomNumber(u.duration)) * time.Minute
 	u.timer = time.AfterFunc(resetTime, u.reset)
 }
 
 // String 返回一个唯一的字符串
 func (u *Unique) String() string {
+	u.resetLocker.RLock()
+	p := u.prefix
 	id, err := u.ai.ID()
-	if err == nil {
-		return u.prefix + strconv.FormatInt(id, u.formatBase)
+	u.resetLocker.RUnlock()
+
+	for err != nil {
+		u.reset() // NOTE: reset 包含对 resetLocker 的操作
+
+		u.resetLocker.RLock()
+		p = u.prefix
+		id, err = u.ai.ID()
+		u.resetLocker.RUnlock()
 	}
 
-	u.reset()
-
-	return u.prefix + strconv.FormatInt(u.ai.MustID(), u.formatBase)
+	return p + strconv.FormatInt(id, u.formatBase)
 }
 
 // Bytes 返回 String() 的 []byte 格式
+//
+// 在多次出错之后，可能会触发 panic
 func (u *Unique) Bytes() []byte {
 	return []byte(u.String())
 }
