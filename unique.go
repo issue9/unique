@@ -15,9 +15,21 @@ import (
 	"github.com/issue9/autoinc"
 )
 
-var defaultUnique = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
+var (
+	// String 以字符串形式表示的唯一值，大致格式如下：
+	//  p4k5f81
+	String = New(time.Now().Unix(), 2, 60, "", 36)
 
-// Unique 基于时间戳的唯一字符串。
+	// Number 以数字形式表示的唯一值，大致格式如下：
+	//  15193130121
+	Number = New(time.Now().Unix(), 2, 60, "", 10)
+
+	// Date 以日期形式表示的唯一值，大致格式如下：
+	//  20180222232332-1
+	Date = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
+)
+
+// Unique 基于时间戳的唯一字符串，长度不固定。
 //
 // Unique 由两部分组成：
 // 前缀是由一个相对稳定的字符串，与时间相关联；
@@ -110,30 +122,30 @@ func (u *Unique) reset() {
 	}
 
 	if u.ai != nil {
-		u.ai.Stop()
+		go u.ai.Stop()
 	}
 	u.ai = autoinc.New(1, u.getRandomNumber(u.step), 1000)
 
 	if u.timer != nil {
 		u.timer.Stop()
 	}
-	resetTime := time.Duration(u.getRandomNumber(u.duration)) * time.Minute
-	u.timer = time.AfterFunc(resetTime, u.reset)
+	dur := time.Duration(u.getRandomNumber(u.duration)) * time.Minute
+	u.timer = time.AfterFunc(dur, u.reset)
 }
 
 // String 返回一个唯一的字符串
 func (u *Unique) String() string {
 	u.resetLocker.RLock()
 	p := u.prefix
-	id, err := u.ai.ID()
+	id, ok := u.ai.ID()
 	u.resetLocker.RUnlock()
 
-	for err != nil {
+	for !ok {
 		u.reset() // NOTE: reset 包含对 resetLocker 的操作
 
 		u.resetLocker.RLock()
 		p = u.prefix
-		id, err = u.ai.ID()
+		id, ok = u.ai.ID()
 		u.resetLocker.RUnlock()
 	}
 
@@ -155,14 +167,4 @@ func (u *Unique) getRandomNumber(max int64) int64 {
 	}
 
 	return n
-}
-
-// String 返回一个唯一的字符串
-func String() string {
-	return defaultUnique.String()
-}
-
-// Bytes 返回 String() 的 []byte 格式
-func Bytes() []byte {
-	return defaultUnique.Bytes()
 }

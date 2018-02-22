@@ -5,8 +5,11 @@
 package unique
 
 import (
+	"math"
 	"testing"
 	"time"
+
+	"github.com/issue9/autoinc"
 
 	"github.com/issue9/assert"
 )
@@ -60,5 +63,34 @@ func TestUnique_getRandomNumber(t *testing.T) {
 	// 保证 getRandomNumber 不会返回 0
 	for i := 0; i <= 100; i++ {
 		a.Equal(u.getRandomNumber(1), 1)
+	}
+}
+
+func TestUnique_String(t *testing.T) {
+	a := assert.New(t)
+
+	u := New(time.Now().Unix(), 100000, 50, "", 5)
+	list := make([]string, 0, 100)
+	for i := 0; i < 100; i++ {
+		str := u.String()
+		for _, item := range list {
+			a.NotEqual(item, str)
+		}
+		list = append(list, str)
+	}
+}
+
+func TestUnique_String_overflow(t *testing.T) {
+	a := assert.New(t)
+
+	u := New(time.Now().Unix(), 100000, 50, "", 5)
+	u.ai = autoinc.New(math.MaxInt64-1, 2, 2)
+	list := make([]string, 0, 100)
+	for i := 0; i < 100; i++ {
+		str := u.String()
+		for _, item := range list {
+			a.NotEqual(item, str)
+		}
+		list = append(list, str)
 	}
 }
