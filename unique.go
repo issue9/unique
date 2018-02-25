@@ -15,19 +15,7 @@ import (
 	"github.com/issue9/autoinc"
 )
 
-var (
-	// String 以字符串形式表示的唯一值，大致格式如下：
-	//  p4k5f81
-	String = New(time.Now().Unix(), 2, 60, "", 36)
-
-	// Number 以数字形式表示的唯一值，大致格式如下：
-	//  15193130121
-	Number = New(time.Now().Unix(), 2, 60, "", 10)
-
-	// Date 以日期形式表示的唯一值，大致格式如下：
-	//  20180222232332-1
-	Date = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
-)
+var stringInst, numberInst, dateInst *Unique
 
 // Unique 基于时间戳的唯一字符串，长度不固定。
 //
@@ -60,6 +48,36 @@ type Unique struct {
 
 	// 用保证 prefix 和 ai 的一致性。
 	resetLocker sync.RWMutex
+}
+
+// String 初始化一个以字符串形式表示唯一值的 Unique 实例，大致格式如下：
+//  p4k5f81
+func String() *Unique {
+	if stringInst == nil {
+		stringInst = New(time.Now().Unix(), 2, 60, "", 36)
+	}
+
+	return stringInst
+}
+
+// Number 初始化一个数字形式表示唯一值的 Unique 实例，大致格式如下：
+//  15193130121
+func Number() *Unique {
+	if numberInst == nil {
+		numberInst = New(time.Now().Unix(), 2, 60, "", 10)
+	}
+
+	return numberInst
+}
+
+// Date 初始化一个以日期形式表示唯一值的 Unique 实例，大致格式如下：
+//  20180222232332-1
+func Date() *Unique {
+	if dateInst == nil {
+		dateInst = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
+	}
+
+	return dateInst
 }
 
 // New 声明一个新的 Unique。
