@@ -4,6 +4,21 @@ unique [![Build Status](https://travis-ci.org/issue9/unique.svg?branch=master)](
 
 用于生成一个唯一字符串
 
+```go
+// 生成由数字和字母组成的唯一字符串，比如 p4k5f81
+unique.String().String()
+
+// 生成由数字组成的唯一字符串，比如 15193130121
+unique.Number().String()
+
+// 生成由日期与数字组成的唯一字符串，比如 20180222232332-1
+unique.Date().String
+
+// 或者可以自定义一个 Unique 实例
+u := unique.New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
+u.String() // 生成唯一字符串。
+```
+
 
 
 ### 安装
