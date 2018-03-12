@@ -52,6 +52,8 @@ type Unique struct {
 
 // String 初始化一个以字符串形式表示唯一值的 Unique 实例，大致格式如下：
 //  p4k5f81
+//
+// NOTE: 多次调用，返回的是同一个实例。
 func String() *Unique {
 	if stringInst == nil {
 		stringInst = New(time.Now().Unix(), 2, 60, "", 36)
@@ -62,6 +64,8 @@ func String() *Unique {
 
 // Number 初始化一个数字形式表示唯一值的 Unique 实例，大致格式如下：
 //  15193130121
+//
+// NOTE: 多次调用，返回的是同一个实例。
 func Number() *Unique {
 	if numberInst == nil {
 		numberInst = New(time.Now().Unix(), 2, 60, "", 10)
@@ -72,6 +76,8 @@ func Number() *Unique {
 
 // Date 初始化一个以日期形式表示唯一值的 Unique 实例，大致格式如下：
 //  20180222232332-1
+//
+// NOTE: 多次调用，返回的是同一个实例。
 func Date() *Unique {
 	if dateInst == nil {
 		dateInst = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
