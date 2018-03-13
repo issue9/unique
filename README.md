@@ -12,7 +12,7 @@ unique.String().String()
 unique.Number().String()
 
 // 生成由日期与数字组成的唯一字符串，比如 20180222232332-1
-unique.Date().String
+unique.Date().String()
 
 // 或者可以自定义一个 Unique 实例
 u := unique.New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
