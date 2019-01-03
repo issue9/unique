@@ -9,9 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/issue9/autoinc"
-
 	"github.com/issue9/assert"
+	"github.com/issue9/autoinc"
 )
 
 func TestNew(t *testing.T) {

@@ -147,7 +147,7 @@ func (u *Unique) reset() {
 	}
 
 	if u.ai != nil {
-		go u.ai.Stop()
+		u.ai.Stop()
 	}
 	u.ai = autoinc.New(1, u.getRandomNumber(u.step), 1000)
 
