@@ -1,4 +1,6 @@
-unique [![Build Status](https://travis-ci.org/issue9/unique.svg?branch=master)](https://travis-ci.org/issue9/unique)
+unique
+[![Build Status](https://travis-ci.org/issue9/unique.svg?branch=master)](https://travis-ci.org/issue9/unique)
+[![Build status](https://ci.appveyor.com/api/projects/status/epkj0uiqbelr8oag?svg=true)](https://ci.appveyor.com/project/caixw/unique)
 ======
 
 
