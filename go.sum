@@ -6,3 +6,5 @@ github.com/issue9/autoinc v1.0.3 h1:QvQqRx34lWIpyZ+5tr+UTRa1mI/WCIS4uFHP3VL6p2c=
 github.com/issue9/autoinc v1.0.3/go.mod h1:H0h4TqVwzgS2/0RMA9E3eOTHUwV2l3Fesf45sPxp5rQ=
 github.com/issue9/rands v1.1.0 h1:tUcTkzlQDxeqqSYHdI0FSMRNgH62HYB4pG8NrIB2CS8=
 github.com/issue9/rands v1.1.0/go.mod h1:CxJnlAzHTi/4zfdYaKQqeN6jLZpZ7giB52DMiLb1H1E=
+github.com/issue9/rands v1.1.1 h1:LN2oLhExq5MqK5bqIzZu18k26QK3eQIWBw3Cbm8fhq4=
+github.com/issue9/rands v1.1.1/go.mod h1:+34JYQL1EcxK79SFD3wOJklufb2967Tl9iom5jE1LF4=
