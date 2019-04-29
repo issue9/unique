@@ -59,7 +59,7 @@ type Unique struct {
 // NOTE: 多次调用，返回的是同一个实例。
 func String() *Unique {
 	if stringInst == nil {
-		stringInst = New(time.Now().Unix(), 2, 60, "", 36)
+		stringInst = New(time.Now().Unix(), 1, 60, "", 36)
 	}
 
 	return stringInst
@@ -71,7 +71,7 @@ func String() *Unique {
 // NOTE: 多次调用，返回的是同一个实例。
 func Number() *Unique {
 	if numberInst == nil {
-		numberInst = New(time.Now().Unix(), 2, 60, "", 10)
+		numberInst = New(time.Now().Unix(), 1, 60, "", 10)
 	}
 
 	return numberInst
@@ -83,7 +83,7 @@ func Number() *Unique {
 // NOTE: 多次调用，返回的是同一个实例。
 func Date() *Unique {
 	if dateInst == nil {
-		dateInst = New(time.Now().Unix(), 2, 60, "20060102150405-", 10)
+		dateInst = New(time.Now().Unix(), 1, 60, "20060102150405-", 10)
 	}
 
 	return dateInst
