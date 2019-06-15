@@ -10,16 +10,21 @@ import "github.com/issue9/rands"
 //
 // 相对于 Unqiue，Rands 更有随机性。
 type Rands struct {
+	// 固定的前缀内容
+	//
+	// 如果不需要，可以为空
+	Prefix string
+
 	Unique *Unique
 	Rands  *rands.Rands
 }
 
 // Bytes 返回 []byte 内容
 func (r *Rands) Bytes() []byte {
-	return append(r.Unique.Bytes(), r.Rands.Bytes()...)
+	return []byte(r.String())
 }
 
 // String 返回字符串内容
 func (r *Rands) String() string {
-	return r.Unique.String() + r.Rands.String()
+	return r.Prefix + r.Unique.String() + r.Rands.String()
 }
