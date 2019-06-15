@@ -44,7 +44,7 @@ type Unique struct {
 	prefixFormat string
 
 	timer    *time.Timer
-	duration int64
+	duration time.Duration
 
 	step int64
 	ai   *autoinc.AutoInc
@@ -59,7 +59,7 @@ type Unique struct {
 // NOTE: 多次调用，返回的是同一个实例。
 func String() *Unique {
 	if stringInst == nil {
-		stringInst = New(time.Now().Unix(), 1, 60, "", 36)
+		stringInst = New(time.Now().Unix(), 1, time.Hour, "", 36)
 	}
 
 	return stringInst
@@ -71,7 +71,7 @@ func String() *Unique {
 // NOTE: 多次调用，返回的是同一个实例。
 func Number() *Unique {
 	if numberInst == nil {
-		numberInst = New(time.Now().Unix(), 1, 60, "", 10)
+		numberInst = New(time.Now().Unix(), 1, time.Hour, "", 10)
 	}
 
 	return numberInst
@@ -83,7 +83,7 @@ func Number() *Unique {
 // NOTE: 多次调用，返回的是同一个实例。
 func Date() *Unique {
 	if dateInst == nil {
-		dateInst = New(time.Now().Unix(), 1, 60, "20060102150405-", 10)
+		dateInst = New(time.Now().Unix(), 1, time.Hour, "20060102150405-", 10)
 	}
 
 	return dateInst
@@ -92,11 +92,11 @@ func Date() *Unique {
 // New 声明一个新的 Unique。
 //
 // seed 随机种子；
-// step 计数器的最大步长，只能大于 0；
-// duration 计数器的最长重置时间，单位秒。系统会在 [1,duration] 范围内重置计数器；
-// prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值。
+// step 计数器的步长，需大于 0；
+// duration 计数器的重置时间；
+// prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值；
 // base 数值转换成字符串时，所采用的进制，可以是 [2,36] 之间的值。
-func New(seed, step, duration int64, prefixFormat string, base int) *Unique {
+func New(seed, step int64, duration time.Duration, prefixFormat string, base int) *Unique {
 	if step <= 0 {
 		panic("无效的参数 step")
 	}
@@ -149,12 +149,12 @@ func (u *Unique) reset() {
 	if u.ai != nil {
 		u.ai.Stop()
 	}
-	u.ai = autoinc.New(1, u.getRandomNumber(u.step), 1000)
+	u.ai = autoinc.New(1, u.step, 1000)
 
 	if u.timer != nil {
 		u.timer.Stop()
 	}
-	dur := time.Duration(u.getRandomNumber(u.duration)) * time.Minute
+	dur := u.duration
 	u.timer = time.AfterFunc(dur, u.reset)
 }
 
@@ -182,14 +182,4 @@ func (u *Unique) String() string {
 // 在多次出错之后，可能会触发 panic
 func (u *Unique) Bytes() []byte {
 	return []byte(u.String())
-}
-
-// 获取一个位于 [1,max) 区间的值
-func (u *Unique) getRandomNumber(max int64) int64 {
-	n := u.random.Int63n(max)
-	if n <= 0 {
-		n++
-	}
-
-	return n
 }

@@ -53,22 +53,10 @@ func TestIsValidDateFormat(t *testing.T) {
 	a.True(isValidDateFormat("05200601021504-"))
 }
 
-func TestUnique_getRandomNumber(t *testing.T) {
-	a := assert.New(t)
-
-	u := New(time.Now().Unix(), 2, 5, "", 36)
-	a.NotNil(u)
-
-	// 保证 getRandomNumber 不会返回 0
-	for i := 0; i <= 100; i++ {
-		a.Equal(u.getRandomNumber(1), 1)
-	}
-}
-
 func TestUnique_String(t *testing.T) {
 	a := assert.New(t)
 
-	u := New(time.Now().Unix(), 100000, 50, "", 5)
+	u := New(time.Now().Unix(), 100000, 50*time.Second, "", 5)
 	list := make([]string, 0, 100)
 	for i := 0; i < 100; i++ {
 		str := u.String()
@@ -82,7 +70,7 @@ func TestUnique_String(t *testing.T) {
 func TestUnique_String_overflow(t *testing.T) {
 	a := assert.New(t)
 
-	u := New(time.Now().Unix(), 100000, 50, "", 5)
+	u := New(time.Now().Unix(), 100000, 50*time.Minute, "", 5)
 	u.ai = autoinc.New(math.MaxInt64-1, 2, 2)
 	list := make([]string, 0, 100)
 	for i := 0; i < 100; i++ {
