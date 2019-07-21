@@ -8,7 +8,7 @@ import "github.com/issue9/rands"
 
 // Rands 生成唯一的随机字符串
 //
-// 相对于 Unqiue，Rands 更有随机性。
+// 相对于 Unique，Rands 更有随机性。
 type Rands struct {
 	// 固定的前缀内容
 	//
