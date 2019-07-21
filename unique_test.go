@@ -13,6 +13,12 @@ import (
 	"github.com/issue9/autoinc"
 )
 
+func BenchmarkUnique(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = String().String()
+	}
+}
+
 func TestNew(t *testing.T) {
 	a := assert.New(t)
 
@@ -37,7 +43,7 @@ func TestNew(t *testing.T) {
 	})
 
 	a.NotPanic(func() {
-		New(20, 1, 1, "20060102150405", 2)
+		New(20, 1, time.Second, "20060102150405", 2)
 	})
 }
 

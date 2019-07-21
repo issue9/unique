@@ -93,7 +93,7 @@ func Date() *Unique {
 //
 // seed 随机种子；
 // step 计数器的步长，需大于 0；
-// duration 计数器的重置时间；
+// duration 计数器的重置时间，不能小于 1*time.Second；
 // prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值；
 // base 数值转换成字符串时，所采用的进制，可以是 [2,36] 之间的值。
 func New(seed, step int64, duration time.Duration, prefixFormat string, base int) *Unique {
@@ -101,8 +101,8 @@ func New(seed, step int64, duration time.Duration, prefixFormat string, base int
 		panic("无效的参数 step")
 	}
 
-	if duration <= 0 {
-		panic("无效的参数 duration")
+	if duration < time.Second {
+		panic("无效的参数 duration，不能小于 1 秒")
 	}
 
 	if prefixFormat != "" && !isValidDateFormat(prefixFormat) {
@@ -154,8 +154,8 @@ func (u *Unique) reset() {
 	if u.timer != nil {
 		u.timer.Stop()
 	}
-	dur := u.duration
-	u.timer = time.AfterFunc(dur, u.reset)
+
+	u.timer = time.AfterFunc(u.duration, u.reset)
 }
 
 // String 返回一个唯一的字符串
