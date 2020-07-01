@@ -51,40 +51,70 @@ type Unique struct {
 	resetLocker sync.RWMutex
 }
 
-// String 初始化一个以字符串形式表示唯一值的 Unique 实例，大致格式如下：
-//  p4k5f81
+// String 返回以字符串形式表示的 Unique 实例
+//
+// 格式为：p4k5f81
 //
 // NOTE: 多次调用，返回的是同一个实例。
 func String() *Unique {
 	if stringInst == nil {
-		stringInst = New(time.Now().Unix(), 1, time.Hour, "", 36)
+		stringInst = NewString()
 	}
 
 	return stringInst
 }
 
-// Number 初始化一个数字形式表示唯一值的 Unique 实例，大致格式如下：
-//  15193130121
+// NewString 声明以字符串形式表示的 Unique 实例
+//
+// 格式为：p4k5f81
+//
+// 与 String 的不同在于，每次调用 NewString 都返回新的实例，而 String 则是返回相同实例。
+func NewString() *Unique {
+	return New(time.Now().Unix(), 1, time.Hour, "", 36)
+}
+
+// Number 返回数字形式表示的 Unique 实例
+//
+// 格式为：15193130121
 //
 // NOTE: 多次调用，返回的是同一个实例。
 func Number() *Unique {
 	if numberInst == nil {
-		numberInst = New(time.Now().Unix(), 1, time.Hour, "", 10)
+		numberInst = NewNumber()
 	}
 
 	return numberInst
 }
 
-// Date 初始化一个以日期形式表示唯一值的 Unique 实例，大致格式如下：
-//  20180222232332-1
+// NewNumber 声明以数字形式表示的 Unique 实例
+//
+// 格式为：15193130121
+//
+// 与 Number 的不同在于，每次调用 NewNumber 都返回新的实例，而 Number 则是返回相同实例。
+func NewNumber() *Unique {
+	return New(time.Now().Unix(), 1, time.Hour, "", 10)
+}
+
+// Date 返回以日期形式表示的 Unique 实例
+//
+// 格式为：20180222232332-1
 //
 // NOTE: 多次调用，返回的是同一个实例。
 func Date() *Unique {
 	if dateInst == nil {
-		dateInst = New(time.Now().Unix(), 1, time.Hour, "20060102150405-", 10)
+		dateInst = NewDate()
 	}
 
 	return dateInst
+}
+
+// NewDate 声明以日期形式表示的 Unique 实例
+//
+// 格式为：20180222232332-1
+//
+// 与 Date 的不同在于，每次调用 NewDate 都返回新的实例，而 Date 则是返回相同实例。
+func NewDate() *Unique {
+	return New(time.Now().Unix(), 1, time.Hour, "20060102150405-", 10)
 }
 
 // New 声明一个新的 Unique。

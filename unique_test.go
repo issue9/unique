@@ -45,6 +45,18 @@ func TestNew(t *testing.T) {
 	})
 }
 
+func TestNumber(t *testing.T) {
+	a := assert.New(t)
+
+	n1 := NewNumber()
+	n2 := NewNumber()
+	a.NotEqual(n1, n2)
+
+	n1 = Number()
+	n2 = Number()
+	a.Equal(n1, n2)
+}
+
 func TestIsValidDateFormat(t *testing.T) {
 	a := assert.New(t)
 
