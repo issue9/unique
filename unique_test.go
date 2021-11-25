@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/issue9/assert"
+	"github.com/issue9/assert/v2"
 	"github.com/issue9/autoinc"
 )
 
@@ -18,7 +18,7 @@ func BenchmarkUnique(b *testing.B) {
 }
 
 func TestNew(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	a.Panic(func() {
 		New(20, 0, 100, "", 10)
@@ -46,7 +46,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestNumber(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	n1 := NewNumber()
 	n2 := NewNumber()
@@ -58,7 +58,7 @@ func TestNumber(t *testing.T) {
 }
 
 func TestIsValidDateFormat(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	a.False(isValidDateFormat("2006"))
 	a.False(isValidDateFormat("200601"))
@@ -70,7 +70,7 @@ func TestIsValidDateFormat(t *testing.T) {
 }
 
 func TestUnique_String(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	u := New(time.Now().Unix(), 100000, 50*time.Second, "", 5)
 	list := make([]string, 0, 100)
@@ -84,7 +84,7 @@ func TestUnique_String(t *testing.T) {
 }
 
 func TestUnique_String_overflow(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	u := New(time.Now().Unix(), 100000, 50*time.Minute, "", 5)
 	u.ai = autoinc.New(math.MaxInt64-1, 2, 2)
