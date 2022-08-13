@@ -15,10 +15,10 @@ import (
 
 var stringInst, numberInst, dateInst *Unique
 
-// Unique 基于时间戳的唯一字符串，长度不固定。
+// Unique 基于时间戳的唯一不定长字符串
 //
 // NOTE: 算法是基于系统时间的。所以必须得保证时间上正确的，否则可能会造成非唯一的情况。
-// NOTE: 产生的数据有一定的顺序性，不适合做 token 等需要完全随机的唯一值。
+// NOTE: 产生的数据有一定的顺序性。
 //
 // Unique 由两部分组成：
 // 前缀是由一个相对稳定的字符串，与时间相关联；
@@ -208,6 +208,4 @@ func (u *Unique) String() string {
 // Bytes 返回 String() 的 []byte 格式
 //
 // 在多次出错之后，可能会触发 panic
-func (u *Unique) Bytes() []byte {
-	return []byte(u.String())
-}
+func (u *Unique) Bytes() []byte { return []byte(u.String()) }

@@ -18,9 +18,7 @@ type Rands struct {
 }
 
 // Bytes 返回 []byte 内容
-func (r *Rands) Bytes() []byte {
-	return []byte(r.String())
-}
+func (r *Rands) Bytes() []byte { return []byte(r.String()) }
 
 // String 返回字符串内容
 func (r *Rands) String() string {
