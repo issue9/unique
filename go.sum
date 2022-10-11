@@ -1,5 +1,6 @@
-github.com/issue9/assert/v3 v3.0.0 h1:/emHhxUb1QP9UmZLy69RhkMyvlyhyqnu+toDlSyWhZg=
 github.com/issue9/assert/v3 v3.0.0/go.mod h1:yft/uaskRpwQTyBT3n1zRl91SR1wNlO4fLZHzOa4bdM=
+github.com/issue9/assert/v3 v3.0.4 h1:WsYZQ6PQmM/pGFrbkn5GIXjWeVZHv+wcl2829UTX1Qc=
+github.com/issue9/assert/v3 v3.0.4/go.mod h1:yft/uaskRpwQTyBT3n1zRl91SR1wNlO4fLZHzOa4bdM=
 github.com/issue9/autoinc v1.0.9 h1:40rlqt+4tMT04Adv7H7Frw8Dn9E7VeKQvDRBMMDgZYU=
 github.com/issue9/autoinc v1.0.9/go.mod h1:0cZrIqIA6YwwYrPa98JVM4zhAPCMaiuJTSoV0NL4n4E=
 github.com/issue9/rands v1.2.1 h1:HikmS1xqk+nQIaMC2fzgs+XdZ2p9WlG5hmsWS37jFnQ=

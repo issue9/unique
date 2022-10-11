@@ -30,6 +30,7 @@ type Unique struct {
 	random *rand.Rand
 
 	// 数据转换成字符串所采用的进制。
+	// 同时应用于自增的数值后缀，以及 prefix 的非时间格式。
 	formatBase int
 
 	// 前缀部分的内容。
@@ -68,7 +69,7 @@ func String() *Unique {
 //
 // 格式为：p4k5f81
 //
-// 与 String 的不同在于，每次调用 NewString 都返回新的实例，而 String 则是返回相同实例。
+// 与 [String] 的不同在于，每次调用 NewString 都返回新的实例，而 String 则是返回相同实例。
 func NewString() *Unique {
 	return New(time.Now().Unix(), 1, time.Hour, "", 36)
 }
@@ -90,7 +91,7 @@ func Number() *Unique {
 //
 // 格式为：15193130121
 //
-// 与 Number 的不同在于，每次调用 NewNumber 都返回新的实例，而 Number 则是返回相同实例。
+// 与 [Number] 的不同在于，每次调用 NewNumber 都返回新的实例，而 Number 则是返回相同实例。
 func NewNumber() *Unique {
 	return New(time.Now().Unix(), 1, time.Hour, "", 10)
 }
@@ -112,7 +113,7 @@ func Date() *Unique {
 //
 // 格式为：20180222232332-1
 //
-// 与 Date 的不同在于，每次调用 NewDate 都返回新的实例，而 Date 则是返回相同实例。
+// 与 [Date] 的不同在于，每次调用 NewDate 都返回新的实例，而 Date 则是返回相同实例。
 func NewDate() *Unique {
 	return New(time.Now().Unix(), 1, time.Hour, "20060102150405-", 10)
 }
@@ -205,7 +206,7 @@ func (u *Unique) String() string {
 	return p + strconv.FormatInt(id, u.formatBase)
 }
 
-// Bytes 返回 String() 的 []byte 格式
+// Bytes 返回 [Unique.String] 的 []byte 格式
 //
 // 在多次出错之后，可能会触发 panic
 func (u *Unique) Bytes() []byte { return []byte(u.String()) }
