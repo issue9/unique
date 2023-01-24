@@ -17,15 +17,15 @@ var stringInst, numberInst, dateInst *Unique
 
 // Unique 基于时间戳的唯一不定长字符串
 //
-// NOTE: 算法是基于系统时间的。所以必须得保证时间上正确的，否则可能会造成非唯一的情况。
-// NOTE: 产生的数据有一定的顺序性。
-//
 // Unique 由两部分组成：
 // 前缀是由一个相对稳定的字符串，与时间相关联；
 // 后缀是一个自增的数值。
 //
 // 每次刷新前缀之后，都会重置后缀的计数器，从头开始。
 // 刷新时间和计数器的步长都是一个随机数。
+//
+// NOTE: 算法是基于系统时间的。所以必须得保证时间上正确的，否则可能会造成非唯一的情况。
+// NOTE: 产生的数据有一定的顺序规则。
 type Unique struct {
 	random *rand.Rand
 
@@ -57,6 +57,8 @@ type Unique struct {
 // 格式为：p4k5f81
 //
 // NOTE: 多次调用，返回的是同一个实例。
+//
+// Deprecated: 可以使用 [NewString] 自行管理实例。
 func String() *Unique {
 	if stringInst == nil {
 		stringInst = NewString()
@@ -68,8 +70,6 @@ func String() *Unique {
 // NewString 声明以字符串形式表示的 Unique 实例
 //
 // 格式为：p4k5f81
-//
-// 与 [String] 的不同在于，每次调用 NewString 都返回新的实例，而 String 则是返回相同实例。
 func NewString() *Unique {
 	return New(time.Now().Unix(), 1, time.Hour, "", 36)
 }
@@ -79,6 +79,8 @@ func NewString() *Unique {
 // 格式为：15193130121
 //
 // NOTE: 多次调用，返回的是同一个实例。
+//
+// Deprecated: 可以使用 [NewNumber] 自行管理实例。
 func Number() *Unique {
 	if numberInst == nil {
 		numberInst = NewNumber()
@@ -90,8 +92,6 @@ func Number() *Unique {
 // NewNumber 声明以数字形式表示的 Unique 实例
 //
 // 格式为：15193130121
-//
-// 与 [Number] 的不同在于，每次调用 NewNumber 都返回新的实例，而 Number 则是返回相同实例。
 func NewNumber() *Unique {
 	return New(time.Now().Unix(), 1, time.Hour, "", 10)
 }
@@ -101,6 +101,8 @@ func NewNumber() *Unique {
 // 格式为：20180222232332-1
 //
 // NOTE: 多次调用，返回的是同一个实例。
+//
+// Deprecated: 可以使用 [NewDate] 自行管理实例。
 func Date() *Unique {
 	if dateInst == nil {
 		dateInst = NewDate()
@@ -112,13 +114,11 @@ func Date() *Unique {
 // NewDate 声明以日期形式表示的 Unique 实例
 //
 // 格式为：20180222232332-1
-//
-// 与 [Date] 的不同在于，每次调用 NewDate 都返回新的实例，而 Date 则是返回相同实例。
 func NewDate() *Unique {
 	return New(time.Now().Unix(), 1, time.Hour, "20060102150405-", 10)
 }
 
-// New 声明一个新的 Unique。
+// New 声明一个新的 Unique
 //
 // seed 随机种子；
 // step 计数器的步长，需大于 0；
@@ -210,3 +210,11 @@ func (u *Unique) String() string {
 //
 // 在多次出错之后，可能会触发 panic
 func (u *Unique) Bytes() []byte { return []byte(u.String()) }
+
+// Stop 停止生成内容
+func (u *Unique) Stop() {
+	u.ai.Stop()
+	if u.timer != nil {
+		u.timer.Stop()
+	}
+}

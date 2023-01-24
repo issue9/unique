@@ -24,3 +24,9 @@ func (r *Rands) Bytes() []byte { return []byte(r.String()) }
 func (r *Rands) String() string {
 	return r.Prefix + r.Unique.String() + r.Rands.String()
 }
+
+// Stop 停止生成数据
+func (r *Rands) Stop() {
+	r.Unique.Stop()
+	r.Rands.Stop()
+}

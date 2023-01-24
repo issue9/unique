@@ -40,9 +40,8 @@ func TestNew(t *testing.T) {
 		New(20, 1, 1, "20060102150405", 37)
 	})
 
-	a.NotPanic(func() {
-		New(20, 1, time.Second, "20060102150405", 2)
-	})
+	u := New(20, 1, time.Second, "20060102150405", 2)
+	u.Stop()
 }
 
 func TestNumber(t *testing.T) {
@@ -73,6 +72,8 @@ func TestUnique_String(t *testing.T) {
 	a := assert.New(t, false)
 
 	u := New(time.Now().Unix(), 100000, 50*time.Second, "", 5)
+	defer u.Stop()
+
 	list := make([]string, 0, 100)
 	for i := 0; i < 100; i++ {
 		str := u.String()
