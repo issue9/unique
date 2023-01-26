@@ -3,57 +3,46 @@
 package unique
 
 import (
-	"math"
+	"context"
 	"testing"
 	"time"
 
 	"github.com/issue9/assert/v3"
-	"github.com/issue9/autoinc"
 )
 
 func BenchmarkUnique(b *testing.B) {
+	s := NewString()
+	ctx, cancel := context.WithCancel(context.Background())
+	go s.Serve(ctx)
+	time.Sleep(time.Microsecond * 500)
+	defer cancel()
+
 	for i := 0; i < b.N; i++ {
-		_ = String().String()
+		_ = s.String()
 	}
 }
 
 func TestNew(t *testing.T) {
 	a := assert.New(t, false)
 
-	a.Panic(func() {
-		New(20, 0, 100, "", 10)
-	})
+	a.PanicString(func() {
+		New(time.Microsecond, "", 10)
+	}, "参数 duration 不能小于 1 秒")
 
-	a.Panic(func() {
-		New(20, 1, 0, "", 10)
-	})
+	a.PanicString(func() {
+		New(time.Second, "2006", 10)
+	}, "无效的 prefixFormat 参数")
 
-	a.Panic(func() {
-		New(20, 1, 1, "2006", 10)
-	})
+	a.PanicString(func() {
+		New(time.Second, "20060102150405", 1)
+	}, "参数 base 只能介于 [2,36] 之间")
 
-	a.Panic(func() {
-		New(20, 1, 1, "20060102150405", 1)
-	})
+	a.PanicString(func() {
+		New(time.Second, "20060102150405", 37)
+	}, "参数 base 只能介于 [2,36] 之间")
 
-	a.Panic(func() {
-		New(20, 1, 1, "20060102150405", 37)
-	})
-
-	u := New(20, 1, time.Second, "20060102150405", 2)
-	u.Stop()
-}
-
-func TestNumber(t *testing.T) {
-	a := assert.New(t, false)
-
-	n1 := NewNumber()
-	n2 := NewNumber()
-	a.NotEqual(n1, n2)
-
-	n1 = Number()
-	n2 = Number()
-	a.Equal(n1, n2)
+	u := New(time.Second, "20060102150405", 2)
+	a.NotNil(u)
 }
 
 func TestIsValidDateFormat(t *testing.T) {
@@ -71,26 +60,15 @@ func TestIsValidDateFormat(t *testing.T) {
 func TestUnique_String(t *testing.T) {
 	a := assert.New(t, false)
 
-	u := New(time.Now().Unix(), 100000, 50*time.Second, "", 5)
-	defer u.Stop()
+	u := New(time.Second, "", 5)
+	ctx, cancel := context.WithCancel(context.Background())
+	go u.Serve(ctx)
+	time.Sleep(time.Microsecond * 500)
+	defer cancel()
 
 	list := make([]string, 0, 100)
 	for i := 0; i < 100; i++ {
-		str := u.String()
-		for _, item := range list {
-			a.NotEqual(item, str)
-		}
-		list = append(list, str)
-	}
-}
-
-func TestUnique_String_overflow(t *testing.T) {
-	a := assert.New(t, false)
-
-	u := New(time.Now().Unix(), 100000, 50*time.Minute, "", 5)
-	u.ai = autoinc.New(math.MaxInt64-1, 2, 2)
-	list := make([]string, 0, 100)
-	for i := 0; i < 100; i++ {
+		time.Sleep(time.Millisecond * 20)
 		str := u.String()
 		for _, item := range list {
 			a.NotEqual(item, str)
