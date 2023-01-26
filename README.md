@@ -9,16 +9,16 @@ unique
 
 ```go
 // 生成由数字和字母组成的唯一字符串，比如 p4k5f81
-unique.NewString().String()
+unique.NewString(10).String()
 
 // 生成由数字组成的唯一字符串，比如 15193130121
-unique.NewNumber().String()
+unique.NewNumber(10).String()
 
 // 生成由日期与数字组成的唯一字符串，比如 20180222232332-1
-unique.NewDate().String()
+unique.NewDate(10).String()
 
 // 或者可以自定义一个 Unique 实例
-u := unique.New(time.Second, "20060102150405-", 10)
+u := unique.New(10, time.Second, "20060102150405-", 10)
 u.String() // 生成唯一字符串。
 ```
 

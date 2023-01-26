@@ -11,7 +11,7 @@ import (
 )
 
 func BenchmarkUnique(b *testing.B) {
-	s := NewString()
+	s := NewString(10)
 	ctx, cancel := context.WithCancel(context.Background())
 	go s.Serve(ctx)
 	time.Sleep(time.Microsecond * 500)
@@ -26,22 +26,22 @@ func TestNew(t *testing.T) {
 	a := assert.New(t, false)
 
 	a.PanicString(func() {
-		New(time.Microsecond, "", 10)
+		New(10, time.Microsecond, "", 10)
 	}, "参数 duration 不能小于 1 秒")
 
 	a.PanicString(func() {
-		New(time.Second, "2006", 10)
+		New(10, time.Second, "2006", 10)
 	}, "无效的 prefixFormat 参数")
 
 	a.PanicString(func() {
-		New(time.Second, "20060102150405", 1)
+		New(10, time.Second, "20060102150405", 1)
 	}, "参数 base 只能介于 [2,36] 之间")
 
 	a.PanicString(func() {
-		New(time.Second, "20060102150405", 37)
+		New(10, time.Second, "20060102150405", 37)
 	}, "参数 base 只能介于 [2,36] 之间")
 
-	u := New(time.Second, "20060102150405", 2)
+	u := New(10, time.Second, "20060102150405", 2)
 	a.NotNil(u)
 }
 
@@ -60,7 +60,7 @@ func TestIsValidDateFormat(t *testing.T) {
 func TestUnique_String(t *testing.T) {
 	a := assert.New(t, false)
 
-	u := New(time.Second, "", 5)
+	u := New(10, time.Second, "", 5)
 	ctx, cancel := context.WithCancel(context.Background())
 	go u.Serve(ctx)
 	time.Sleep(time.Microsecond * 500)

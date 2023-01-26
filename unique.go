@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-const bufferSize = 1000
-
 // Unique 基于时间戳的唯一不定长字符串
 //
 // Unique 由两部分组成：
@@ -45,28 +43,36 @@ type Unique struct {
 // NewString 声明以字符串形式表示的 Unique 实例
 //
 // 格式为：p4k5f81
-func NewString() *Unique { return New(time.Hour, "", 36) }
+func NewString(bufferSize int) *Unique {
+	return New(bufferSize, time.Hour, "", 36)
+}
 
 // NewNumber 声明以数字形式表示的 Unique 实例
 //
 // 格式为：15193130121
-func NewNumber() *Unique { return New(time.Hour, "", 10) }
+func NewNumber(bufferSize int) *Unique {
+	return New(bufferSize, time.Hour, "", 10)
+}
 
 // NewDate 声明以日期形式表示的 Unique 实例
 //
 // 格式为：20180222232332-1
-func NewDate() *Unique {
-	return New(time.Hour, "20060102150405-", 10)
+func NewDate(bufferSize int) *Unique {
+	return New(bufferSize, time.Hour, "20060102150405-", 10)
 }
 
 // New 声明一个新的 Unique
 //
 // 每一秒，最多能产生 [math.MaxInt64] 个唯一值，需求量超过此值的不适合。
 //
+// bufferSize 缓存大小，不能小于 1；
 // duration 计数器的重置时间，不能小于 1*time.Second；
 // prefixFormat 格式化 prefix 的方式，若指定，则格式化为时间，否则将时间戳转换为数值；
 // base 数值转换成字符串时，所采用的进制，可以是 [2,36] 之间的值。
-func New(duration time.Duration, prefixFormat string, base int) *Unique {
+func New(bufferSize int, duration time.Duration, prefixFormat string, base int) *Unique {
+	if bufferSize < 1 {
+		panic("参数 bufferSize 不能小于 1")
+	}
 	if duration < time.Second {
 		panic("参数 duration 不能小于 1 秒")
 	}
@@ -83,7 +89,8 @@ func New(duration time.Duration, prefixFormat string, base int) *Unique {
 		formatBase:   base,
 		duration:     duration,
 		prefixFormat: prefixFormat,
-		channel:      make(chan string, bufferSize),
+
+		channel: make(chan string, bufferSize),
 	}
 }
 
