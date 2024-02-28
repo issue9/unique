@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2017-2024 caixw
+//
 // SPDX-License-Identifier: MIT
 
 // Package unique 产生一个唯一字符串

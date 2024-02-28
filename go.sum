@@ -1,4 +1,4 @@
-github.com/issue9/assert/v3 v3.0.4 h1:WsYZQ6PQmM/pGFrbkn5GIXjWeVZHv+wcl2829UTX1Qc=
-github.com/issue9/assert/v3 v3.0.4/go.mod h1:yft/uaskRpwQTyBT3n1zRl91SR1wNlO4fLZHzOa4bdM=
-github.com/issue9/rands/v2 v2.0.0 h1:SdG8iflIzuWpa6CKLmMwn4pTZj+mSxS7s+1TCH6WXUE=
-github.com/issue9/rands/v2 v2.0.0/go.mod h1:wTOXDlW9QUtba7o3I/RayfjH7mLYrER2TFHaIeKe96o=
+github.com/issue9/assert/v4 v4.1.1 h1:OhPE8SB8n/qZCNGLQa+6MQtr/B3oON0JAVj68k8jJlc=
+github.com/issue9/assert/v4 v4.1.1/go.mod h1:v7qDRXi7AsaZZNh8eAK2rkLJg5/clztqQGA1DRv9Lv4=
+github.com/issue9/rands/v2 v2.0.1 h1:Bg6ASFymqrEYb1MPEKUihFLoRJ7i5TfczbLS9Zw8/gs=
+github.com/issue9/rands/v2 v2.0.1/go.mod h1:xSSN8bmW5Vuo7C/oRz+xvUxinYgloHkVu92DzgyylIk=
