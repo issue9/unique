@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 // Unique 基于时间戳的唯一不定长字符串
@@ -31,8 +32,8 @@ type Unique struct {
 
 	// 前缀部分的内容
 	//
-	// 根据 prefixFormat 是否存在，会呈现不同的内容：
-	//  - 空值，prefix 为时间戳，按 formatBase 进制进行转换之后的字符串；
+	// 根据 prefixFormat 的值，会呈现不同的内容：
+	//  - 空值，prefix 为时间戳按 formatBase 进制进行转换之后的字符串；
 	//  - 非空，按 prefixFormat 进行格式化的时间格式。
 	prefix       string
 	prefixFormat string
@@ -56,9 +57,7 @@ func NewNumber(bufferSize int) *Unique { return New(bufferSize, time.Hour, "", 1
 // NewDate 声明以日期形式表示的 [Unique] 实例
 //
 // 格式为：20180222232332-1
-func NewDate(bufferSize int) *Unique {
-	return New(bufferSize, time.Hour, "20060102150405-", 10)
-}
+func NewDate(bufferSize int) *Unique { return New(bufferSize, time.Hour, "20060102150405-", 10) }
 
 // New 声明一个新的 [Unique]
 //
@@ -146,6 +145,7 @@ func (u *Unique) reset(ctx context.Context) {
 func (u *Unique) String() string { return <-u.channel }
 
 // Bytes 返回 [Unique.String] 的 []byte 格式
-//
-// 在多次出错之后，可能会触发 panic
-func (u *Unique) Bytes() []byte { return []byte(u.String()) }
+func (u *Unique) Bytes() []byte {
+	s :=u.String()
+	return unsafe.Slice(unsafe.StringData(s), len(s))
+}

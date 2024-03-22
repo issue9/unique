@@ -12,18 +12,6 @@ import (
 	"github.com/issue9/assert/v4"
 )
 
-func BenchmarkUnique(b *testing.B) {
-	s := NewString(10)
-	ctx, cancel := context.WithCancel(context.Background())
-	go s.Serve(ctx)
-	time.Sleep(time.Microsecond * 500)
-	defer cancel()
-
-	for i := 0; i < b.N; i++ {
-		_ = s.String()
-	}
-}
-
 func TestNew(t *testing.T) {
 	a := assert.New(t, false)
 
