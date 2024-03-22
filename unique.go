@@ -24,11 +24,12 @@ import (
 // NOTE: 算法是基于系统时间的。所以必须得保证时间上正确的，否则可能会造成非唯一的情况。
 // NOTE: 产生的数据有一定的顺序规则。
 type Unique struct {
-	// 数值转换成字符串所采用的进制。
+	// 数值转换成字符串所采用的进制
+	//
 	// 同时应用于自增的数值后缀，以及 prefix 的非时间格式。
 	formatBase int
 
-	// 前缀部分的内容。
+	// 前缀部分的内容
 	//
 	// 根据 prefixFormat 是否存在，会呈现不同的内容：
 	//  - 空值，prefix 为时间戳，按 formatBase 进制进行转换之后的字符串；
@@ -42,28 +43,24 @@ type Unique struct {
 	duration time.Duration
 }
 
-// NewString 声明以字符串形式表示的 Unique 实例
+// NewString 声明以字符串形式表示的 [Unique] 实例
 //
 // 格式为：p4k5f81
-func NewString(bufferSize int) *Unique {
-	return New(bufferSize, time.Hour, "", 36)
-}
+func NewString(bufferSize int) *Unique { return New(bufferSize, time.Hour, "", 36) }
 
-// NewNumber 声明以数字形式表示的 Unique 实例
+// NewNumber 声明以数字形式表示的 [Unique] 实例
 //
 // 格式为：15193130121
-func NewNumber(bufferSize int) *Unique {
-	return New(bufferSize, time.Hour, "", 10)
-}
+func NewNumber(bufferSize int) *Unique { return New(bufferSize, time.Hour, "", 10) }
 
-// NewDate 声明以日期形式表示的 Unique 实例
+// NewDate 声明以日期形式表示的 [Unique] 实例
 //
 // 格式为：20180222232332-1
 func NewDate(bufferSize int) *Unique {
 	return New(bufferSize, time.Hour, "20060102150405-", 10)
 }
 
-// New 声明一个新的 Unique
+// New 声明一个新的 [Unique]
 //
 // 每一秒，最多能产生 [math.MaxInt64] 个唯一值，需求量超过此值的不适合。
 //
