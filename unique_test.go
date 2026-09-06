@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017-2024 caixw
+// SPDX-FileCopyrightText: 2017-2026 caixw
 //
 // SPDX-License-Identifier: MIT
 
@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/issue9/assert/v4"
+	"github.com/issue9/assert/v5"
 )
 
 func TestNew(t *testing.T) {
@@ -57,7 +57,7 @@ func TestUnique_String(t *testing.T) {
 	defer cancel()
 
 	list := make([]string, 0, 100)
-	for i := 0; i < 100; i++ {
+	for range 100 {
 		time.Sleep(time.Millisecond * 20)
 		str := u.String()
 		for _, item := range list {

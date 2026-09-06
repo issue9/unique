@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 caixw
+// SPDX-FileCopyrightText: 2024-2026 caixw
 //
 // SPDX-License-Identifier: MIT
 
@@ -20,7 +20,7 @@ func BenchmarkUnique(b *testing.B) {
 	time.Sleep(time.Microsecond * 500)
 	defer cancel()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = s.String()
 	}
 }
@@ -34,7 +34,7 @@ func BenchmarkRands(b *testing.B) {
 	time.Sleep(time.Microsecond * 500)
 	defer cancel()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = s.String()
 	}
 }
